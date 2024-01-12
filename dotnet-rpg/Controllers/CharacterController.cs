@@ -6,11 +6,21 @@ namespace dotnet_rpg.Controllers;
 [Route("api/[controller]")]
 public class CharacterController: ControllerBase
 {
-    private static readonly Character knight = new Character();
+    private static readonly List<Character> characters =
+    [
+        new(),
+        new() { Name = "Sam" }
+    ];
+
+    [HttpGet("GetAll")]
+    public ActionResult<List<Character>> Get()
+    {
+        return Ok(characters);
+    }
 
     [HttpGet]
-    public ActionResult<Character> Get()
+    public ActionResult<Character> GetSingle()
     {
-        return Ok(knight);
+        return Ok(characters[0]);
     }
 }
