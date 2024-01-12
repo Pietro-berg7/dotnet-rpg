@@ -9,7 +9,7 @@ public class CharacterController: ControllerBase
     private static readonly List<Character> characters =
     [
         new(),
-        new() { Name = "Sam" }
+        new() { Id = 1, Name = "Sam" }
     ];
 
     [HttpGet("GetAll")]
@@ -18,9 +18,9 @@ public class CharacterController: ControllerBase
         return Ok(characters);
     }
 
-    [HttpGet]
-    public ActionResult<Character> GetSingle()
+    [HttpGet("{id}")]
+    public ActionResult<Character> GetSingle(int id)
     {
-        return Ok(characters[0]);
+        return Ok(characters.FirstOrDefault(c => c.Id == id));
     }
 }
