@@ -77,12 +77,14 @@ public class CharacterService: ICharacterService
 
         try
         {
-            var character = characters.FirstOrDefault(c => c.Id == updatedCharacter.Id);
+            var character =
+                await _context.Characters.FirstOrDefaultAsync(c => c.Id == updatedCharacter.Id);
             if (character is null)
                 throw new Exception($"Character with Id {updatedCharacter.Id} not found.");
 
             _mapper.Map(updatedCharacter, character);
 
+            await _context.SaveChangesAsync();
             serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
         }
         catch (Exception ex)
