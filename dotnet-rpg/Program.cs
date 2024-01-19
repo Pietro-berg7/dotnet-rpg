@@ -1,8 +1,10 @@
 global using dotnet_rpg.Data;
 global using dotnet_rpg.Dtos.Character;
+global using dotnet_rpg.Dtos.Weapon;
 global using dotnet_rpg.Models;
 global using dotnet_rpg.Services.CharacterService;
 global using Microsoft.EntityFrameworkCore;
+using dotnet_rpg.Services.WeaponService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -45,6 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IWeaponService, WeaponService>();
 
 
 var app = builder.Build();
