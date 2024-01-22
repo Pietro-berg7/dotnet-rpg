@@ -12,4 +12,10 @@ public class FightController: ControllerBase
     {
         _fightService = fightService;
     }
+
+    [HttpPost("Weapon")]
+    public async Task<ActionResult<ServiceResponse<AttackResultDto>>> WeaponAttack(WeaponAttackDto request)
+    {
+        return Ok(await  _fightService.WeaponAttack(request));
+    }
 }

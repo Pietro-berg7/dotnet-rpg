@@ -2,4 +2,5 @@
 
 public interface IFightService
 {
+    Task<ServiceResponse<AttackResultDto>> WeaponAttack(WeaponAttackDto request);
 }

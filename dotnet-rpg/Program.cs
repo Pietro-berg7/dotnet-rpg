@@ -1,5 +1,6 @@
 global using dotnet_rpg.Data;
 global using dotnet_rpg.Dtos.Character;
+global using dotnet_rpg.Dtos.Fight;
 global using dotnet_rpg.Dtos.Weapon;
 global using dotnet_rpg.Models;
 global using dotnet_rpg.Services.CharacterService;
