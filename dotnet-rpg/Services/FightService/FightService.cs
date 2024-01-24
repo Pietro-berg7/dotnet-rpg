@@ -1,15 +1,14 @@
-﻿
-using dotnet_rpg.Models;
-
-namespace dotnet_rpg.Services.FightService;
+﻿namespace dotnet_rpg.Services.FightService;
 
 public class FightService: IFightService
 {
     public readonly DataContext _context;
+    public readonly IMapper _mapper;
 
-    public FightService(DataContext context)
+    public FightService(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<ServiceResponse<FightResultDto>> Fight(FightRequestDto request)
@@ -30,7 +29,7 @@ public class FightService: IFightService
             bool defeated = false;
             while (!defeated)
             {
-                foreach(var attacker in characters)
+                foreach (var attacker in characters)
                 {
                     var opponents = characters.Where(c => c.Id != attacker.Id).ToList();
                     var opponent = opponents[new Random().Next(opponents.Count)];
@@ -39,12 +38,12 @@ public class FightService: IFightService
                     string attackUsed = string.Empty;
 
                     bool useWeapon = new Random().Next(2) == 0;
-                    if(useWeapon && attacker.Weapon is not null)
+                    if (useWeapon && attacker.Weapon is not null)
                     {
                         attackUsed = attacker.Weapon.Name;
                         damage = DoWeaponAttack(attacker, opponent);
                     }
-                    else if(!useWeapon && attacker.Skills is not null)
+                    else if (!useWeapon && attacker.Skills is not null)
                     {
                         var skill = attacker.Skills[new Random().Next(attacker.Skills.Count)];
                         attackUsed = skill.Name;
@@ -60,7 +59,7 @@ public class FightService: IFightService
                     response.Data.Log
                         .Add($"{attacker.Name} attacks {opponent.Name} using {attackUsed} with {(damage >= 0 ? damage : 0)} damage");
 
-                    if(opponent.HitPoints <= 0)
+                    if (opponent.HitPoints <= 0)
                     {
                         defeated = true;
                         attacker.Victories++;
@@ -186,7 +185,7 @@ public class FightService: IFightService
 
     private static int DoWeaponAttack(Character attacker, Character opponent)
     {
-        if(attacker.Weapon is null)
+        if (attacker.Weapon is null)
             throw new Exception("Attacker has no weapon!");
 
         int damage = attacker.Weapon.Damage + (new Random().Next(attacker.Strength));
@@ -195,5 +194,21 @@ public class FightService: IFightService
         if (damage > 0)
             opponent.HitPoints -= damage;
         return damage;
+    }
+
+    public async Task<ServiceResponse<List<HighscoreDto>>> GetHighscore()
+    {
+        var characters = await _context.Characters
+            .Where(c => c.Fights > 0)
+            .OrderByDescending(c => c.Victories)
+            .ThenBy(c => c.Defeats)
+            .ToListAsync();
+
+        var response = new ServiceResponse<List<HighscoreDto>>()
+        {
+            Data = characters.Select(c => _mapper.Map<HighscoreDto>(c)).ToList()
+        };
+
+        return response;
     }
 }
